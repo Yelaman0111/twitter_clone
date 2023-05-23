@@ -3,6 +3,7 @@ const app = express();
 const router = express.Router();
 const bodyParser = require("body-parser");
 const User = require("../schemas/UserSchema");
+const bcrypt = require("bcrypt");
 
 app.set("view engine", "pug");
 app.set("views", "views");
@@ -40,13 +41,23 @@ router.post("/", async (req, res, next) => {
 
         if(user == null) {
 
+            var data = req.body;
+            data.password = await bcrypt.hash(data.password, 10);
+
+            User.create(data).then((user) => {
+
+                req.session.user = user;
+                return res.redirect('/');
+            });
+
+
         }else{
 
             if(email == user.email){
                 payload.errorMessage = "Email already in use.";
             }else {
                 payload.errorMessage = "Username already in use.";
-            }
+            } 
             res.status(200).render("register", payload);
         }
     }else{
