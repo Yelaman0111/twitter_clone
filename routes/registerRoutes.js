@@ -23,7 +23,6 @@ router.post("/", async (req, res, next) => {
     var username    = req.body.username.trim();
     var email       = req.body.email.trim();
     var password    = req.body.password;
-
     var payload = req.body;
 
     if(firstName && lastName && username && email && password)
@@ -49,8 +48,6 @@ router.post("/", async (req, res, next) => {
                 req.session.user = user;
                 return res.redirect('/');
             });
-
-
         }else{
 
             if(email == user.email){
@@ -65,6 +62,5 @@ router.post("/", async (req, res, next) => {
         res.status(200).render("register", payload);
     }
 });
-
 
 module.exports = router;

@@ -9,7 +9,6 @@ app.set("view engine", "pug");
 app.set("views", "views");
 app.use(bodyParser.urlencoded({ extended: false }));
 
-
 router.get("/", (req, res, next) => {
     res.status(200).render("login");
 });
@@ -30,7 +29,6 @@ router.post("/", async (req, res, next) => {
             res.status(200).render("login", payload);
         });
         
-
         if(user != null){
             var result = await bcrypt.compare(req.body.logPassword, user.password);
             if(result === true){
@@ -41,10 +39,9 @@ router.post("/", async (req, res, next) => {
 
         payload.errorMessage = "Login credentials incorrect."
         return res.status(200).render("login", payload);
-
     }
+
     payload.errorMessage = "<Make sure ach field has a valid value>."
     res.status(200).render("login");
-
 });
 module.exports = router;
