@@ -44,3 +44,79 @@ mixin createDeletePostModal()
 mixin createPostsModals(userLoggedIn)
     +createReplyModal(userLoggedIn)
     +createDeletePostModal()
+    +createPinPostModal()
+    +createConfirmUnPinPostModal()
+
+mixin createFollowButton(user, isFollowing)
+    - text = isFollowing ? "Following" : "Follow"
+    - buttonClass = isFollowing ? "followButton following" : "followButton"
+    button(class=buttonClass, data-user=user._id) #{text}
+
+mixin createTab(name, href, isSelected)
+    - className = isSelected ? "tab active" : "tab"
+    a(href=href, class=className)
+        span #{name}
+
+mixin createImageUploadModal()
+    #ImageUploadModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='imageUploadLabel', aria-hidden='true')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5#imageUploadLabel.modal-title Upload new picture.
+                    button.close(type='button', data-bs-dismiss='modal', aria-label='Close')
+                        span(aria-hidden='true') &times;
+                .modal-body
+                    input#filePhoto(type="file", name="filePhoto")
+
+                    .imageProviewContainer 
+                        img#imagePreview
+                        
+                .modal-footer
+                    button.btn.btn-secondary(type='button', data-bs-dismiss='modal') Cancel
+                    button#imageUploadButton.btn.btn-primary(type='button') Save
+
+mixin createCoverPhotoUploadModal()
+    #CoverPhotoUploadModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='CoverPhotoUploadModalLabel', aria-hidden='true')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5#CoverPhotoUploadModalLabel.modal-title Upload new cover photo.
+                    button.close(type='button', data-bs-dismiss='modal', aria-label='Close')
+                        span(aria-hidden='true') &times;
+                .modal-body
+                    input#coverPhoto(type="file", name="coverPhoto")
+
+                    .imageProviewContainer 
+                        img#coverPreview
+                        
+                .modal-footer
+                    button.btn.btn-secondary(type='button', data-bs-dismiss='modal') Cancel
+                    button#coverPhotoUploadButton.btn.btn-primary(type='button') Save
+
+mixin createPinPostModal()
+    #confirmPinPostModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='confirmPinPostModalLabel', aria-hidden='true')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5#confirmPinPostModalLabel.modal-title Pin this post?
+                    button.close(type='button', data-bs-dismiss='modal', aria-label='Close')
+                        span(aria-hidden='true') &times;
+                .modal-body
+                    p This post will apppear at the top of ypur profile. You can pin only one post.    
+                .modal-footer
+                    button.btn.btn-secondary(type='button', data-bs-dismiss='modal') Cancel
+                    button#confirmPinPostModalButton.btn.btn-primary(type='button') Pin
+
+mixin createConfirmUnPinPostModal()
+    #confirmUnPinPostModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='confirmUnPinPostModalLabel', aria-hidden='true')
+        .modal-dialog(role='document')
+            .modal-content
+                .modal-header
+                    h5#cconfirmUnPinPostModalLabel.modal-title Unpin this post?
+                    button.close(type='button', data-bs-dismiss='modal', aria-label='Close')
+                        span(aria-hidden='true') &times;
+                .modal-body
+                    p This post will be unpined.    
+                .modal-footer
+                    button.btn.btn-secondary(type='button', data-bs-dismiss='modal') Cancel
+                    button#confirmUnPinPostModalButton.btn.btn-primary(type='button') Unpin

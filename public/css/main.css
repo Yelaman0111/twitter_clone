@@ -1,5 +1,6 @@
 :root {
     --blue: #1FA2F1;
+    --blueBackground: rgb(212, 237, 255, 0.6);
     --blueLight: #9BD1F9;
     --btnHoverBg: #d4edff;
     --lightGrey: rgb(230, 236,240);
@@ -17,6 +18,8 @@
 
 a {
     color: inherit;
+    text-decoration: none;
+
 }
 
 a:hover {
@@ -57,6 +60,10 @@ nav a:hover {
     background-color: var(--btnHoverBg);
     color: var(--blue);
     border-radius: 50%;
+}
+
+.wrapper > .row {
+    margin: 0;
 }
 
 button {
@@ -249,4 +256,172 @@ button span {
 }
 .header .date{
     flex: 1;
+}
+
+.errorMessage{
+    padding: var(--spacing);
+}
+
+.profileHeaderContainer .coverPhotoSection {
+    height: 180px;
+    background-color: var(--blue);
+    position: relative;
+}
+
+.profileHeaderContainer .userImageContainer{
+    height: 132px;
+    width: 132px;
+    margin-left: var(--spacing);
+    position: absolute;
+    bottom: -66px;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.profileHeaderContainer .userImageContainer img{
+    border: 4px solid #fff;
+ 
+}
+
+.profileHeaderContainer .profileButtonsContainer{
+    text-align: right;
+    padding: var(--spacing);
+    min-height: 66px;
+    
+}
+
+.profileButton, .followButton {
+    border: 1px solid var(--blue);
+    color: var(--blue);
+    font-weight: bold;
+    padding: 5px 15px;
+    border-radius: 60px;
+    display: inline-block;
+    margin-left: var(--spacing);
+    
+}
+
+.profileButton:hover, .followButton:hover{
+    background-color: var(--blueBackground);
+}
+
+.followButton.following {
+    background-color: var(--blue);
+    color: #fff;
+}
+
+.profileHeaderContainer .userDetailsContainer{
+    display: flex;
+    flex-direction: column;
+    padding: 0 var(--spacing)
+}
+
+.folowersContainer .value {
+    font-weight: bold;
+    margin-right: 5px;
+    
+}
+
+.folowersContainer span:not(.value) {
+    color: var(--greyText);
+}
+
+.folowersContainer a{
+    margin-right: 15px;
+}
+
+.folowersContainer a:hover{
+    border-bottom: 1px solid #000;
+}
+
+.tabsContainer {
+    display: flex;
+    border-bottom: 1px solid var(--lightGrey);
+    flex-shrink: 0;
+}
+
+.tab {
+    flex: 1;
+    height: 52px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--greyText);
+    font-weight: bold;
+    
+}
+
+.tab.active {
+    color: var(--blue);
+    border-bottom: 2px solid var(--blue)
+}
+
+.tab:hover{
+    color: var(--blue);
+    background-color: var(--blueBackground)
+}
+
+.noResults{
+    padding: var(--spacing);
+}
+
+.resultsContainer{
+    display: flex;
+    flex-direction: column;
+}
+.resultsContainer .user{
+    padding: var(--spacing);
+    display: flex;
+    border-bottom: 1px solid var(--lightGrey)
+}
+
+.user .userDetailsContainer{
+    flex: 1;
+    padding: 0 var(--spacing);
+}
+
+.profilePictureButton, .coverPhotoButton {
+    position: absolute;
+    font-size: 50px;
+    color: rgbs(0,0,0,0.6);
+    display: none;
+}
+.userImageContainer:hover .profilePictureButton, 
+.coverPhotoSection:hover .coverPhotoButton{
+    display: block;
+}
+
+.coverPhotoContainer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+#imagePreview,
+#coverPreview {
+    width: 100%;
+    display: block;
+    max-width: 100%;    
+}
+
+.coverPhotoContainer img{
+    width: 100%;
+    height: 100%;
+    object-fit:cover;
+}
+
+.pinnedButton.pinned{
+    color: var(--blue);
+}
+
+
+.pinnedPostText {
+    font-size: 12px;
+    color: var(--greyText)
+}
+
+.pinnedPostContainer {
+    border-bottom: 10px solid rgb(230, 236, 240);
 }

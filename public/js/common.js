@@ -1,3 +1,6 @@
+//Globals
+var cropper;
+
 $("#postTextarea, #replyTextarea").keyup(event => {
     var textbox = $(event.target);
     var value = textbox.val().trim();
@@ -64,12 +67,160 @@ $("#deletePostModal").on("show.bs.modal", (event) => {
     var button = $(event.relatedTarget);
     var postId = getPostIdFromElement(button);
     $("#deletePostButton").data("id", postId);
-
-    console.log($("#deletePostButton").data().id)
-    // $.get(`/api/posts/${postId}`, result => {
-    //     outputPosts(result.postData, $("#originalPostContainer"));
-    // });
 })
+
+$("#confirmPinPostModal").on("show.bs.modal", (event) => {
+    var button = $(event.relatedTarget);
+    var postId = getPostIdFromElement(button);
+    $("#confirmPinPostModalButton").data("id", postId);
+})
+
+$("#confirmUnPinPostModal").on("show.bs.modal", (event) => {
+    var button = $(event.relatedTarget);
+    var postId = getPostIdFromElement(button);
+    $("#confirmUnPinPostModalButton").data("id", postId);
+})
+
+$("#deletePostButton").click((event) => {
+    var id = $(event.target).data("id");
+
+    $.ajax({
+        url: `/api/posts/${id}`,
+        type: "DELETE",
+        success: (data, status, xhr) => {
+            if(xhr.status != 202){
+                console.log("could not delete post");
+            }else{
+                location.reload();
+            }
+        }
+    })
+
+});
+
+$("#confirmPinPostModalButton").click((event) => {
+    var id = $(event.target).data("id");
+
+    $.ajax({
+        url: `/api/posts/${id}`,
+        data: { pinned: true},
+        type: "PUT",
+        success: (data, status, xhr) => {
+            if(xhr.status != 204){
+                console.log("could not pin post");
+            }else{
+                location.reload();
+            }
+        }
+    })
+
+});
+
+$("#confirmUnPinPostModalButton").click((event) => {
+    var id = $(event.target).data("id");
+
+    $.ajax({
+        url: `/api/posts/${id}`,
+        data: { pinned: false},
+        type: "PUT",
+        success: (data, status, xhr) => {
+            if(xhr.status != 204){
+                console.log("could not pin post");
+            }else{
+                location.reload();
+            }
+        }
+    })
+
+});
+
+$("#filePhoto").change(function() {
+    if(this.files && this.files[0]) {
+        var reader = new FileReader();
+        reader.onload = (e) => {
+            var image = document.getElementById("imagePreview");
+            image.src = e.target.result;
+
+            if(cropper !== undefined){
+                cropper.destroy();
+            }
+
+            cropper = new Cropper(image, {
+                aspectRatio: 1 / 1,
+                background: false
+            });
+
+        }
+        reader.readAsDataURL(this.files[0]);
+    }
+})
+
+$("#coverPhoto").change(function() {
+    if(this.files && this.files[0]) {
+        var reader = new FileReader();
+        reader.onload = (e) => {
+            var image = document.getElementById("coverPreview");
+            image.src = e.target.result;
+
+            if(cropper !== undefined){
+                cropper.destroy();
+            }
+
+            cropper = new Cropper(image, {
+                aspectRatio: 16 / 9,
+                background: false
+            });
+
+        }
+        reader.readAsDataURL(this.files[0]);
+    }
+})
+
+$("#imageUploadButton").click(() => {
+    var canvas = cropper.getCroppedCanvas();
+
+    if(canvas == null){
+        console.log("could not upload image.");
+        return;
+    } 
+
+    canvas.toBlob((blob) => {
+        var formData = new FormData();
+        formData.append("croppedImage", blob);
+
+        $.ajax({
+            url: "/api/users/profilePicture",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: () => location.reload()
+        });
+    });
+});
+
+$("#coverPhotoUploadButton").click(() => {
+    var canvas = cropper.getCroppedCanvas();
+
+    if(canvas == null){
+        console.log("could not upload image.");
+        return;
+    }
+
+    canvas.toBlob((blob) => {
+        var formData = new FormData();
+        formData.append("croppedImage", blob);
+
+        $.ajax({
+            url: "/api/users/coverPhoto",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: () => location.reload()
+        });
+    });
+});
 
 $(document).on("click" , ".likeButton", (event) => {
 
@@ -131,6 +282,37 @@ $(document).on("click" , ".post", (event) => {
     
 });
 
+$(document).on("click" , ".followButton", (event) => {
+    var button = $(event.target);
+    var userId = button.data().user;
+
+    $.ajax({
+        url: `/api/users/${userId}/follow`,
+        type: "PUT",
+        success: (data, status, xhr) => {
+
+            if(xhr.status == 404) console.log("Error");
+
+            var difference = 1;
+            if(data.following && data.following.includes(userId)){
+                button.addClass("following");
+                button.text("Following");
+            }
+            else {
+                button.removeClass("following");
+                button.text("Follow");
+                difference = -1;
+            }
+
+            var followersLabel = $("#followerValue");
+            if(followersLabel != 0){
+                var followersText = parseInt(followersLabel.text());
+                followersLabel.text(followersText + difference);
+            }
+        }
+    })
+});
+
 function getPostIdFromElement(element){
     var isRoot = element.hasClass("post");
     var rootElement = isRoot ? element : element.closest(".post");
@@ -179,9 +361,23 @@ function createPosthtml(postData, largeFont = false){
     }
 
     var buttons = "";
+    var pinnedPostText = "";
     if(postData.postedBy._id == userLoggedIn._id){
-        buttons = `<button data-id=${postData._id} data-bs-toggle='modal' data-bs-target='#deletePostModal'>
-                <i class='fas fa-times'></i>
+        
+        var pinnedClass = "";
+        var dataTarget = "#confirmPinPostModal"
+        if(postData.pinned === true){
+            pinnedClass = "pinned";
+            dataTarget = "#confirmUnPinPostModal"
+            pinnedPostText = "<i class='fas fa-thumbtack'> </i><span>Pinned post</span>";
+        }
+
+        buttons = `
+                <button class="pinnedButton ${pinnedClass}" data-id=${postData._id} data-bs-toggle='modal' data-bs-target='${dataTarget}'>
+                    <i class='fas fa-thumbtack'></i>
+                </buton>
+                <button data-id=${postData._id} data-bs-toggle='modal' data-bs-target='#deletePostModal'>
+                    <i class='fas fa-times'></i>
                 </buton>` 
     }
 
@@ -194,6 +390,9 @@ function createPosthtml(postData, largeFont = false){
                         <img src='${postedBy.profilePic}'>
                     </div>
                     <div class='postContentContainer'>
+                        <div class='pinnedPostText'>
+                            ${pinnedPostText}
+                        </div>
                         <div class='header'>
                             <a href='/profile/${postedBy.username}' class='displayName'>${displayName}</a>
                             <span class='username'>@${postedBy.username}</span>
