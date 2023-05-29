@@ -17,13 +17,15 @@ router.get("/", async (req, res, next) => {
         delete searchObject.isReply;
     }
 
+    if(searchObject.search !== undefined){
+        searchObject.content = { $regex: searchObject.search, $options: "i" };
+        delete searchObject.search;
+    }
+
     if(searchObject.followingOnly !== undefined){
         var followingOnly = searchObject.followingOnly == "true";
 
         if(followingOnly) {
-            // var objectIds = req.session.user.following;
-            // objectIds.push(req.session.user._id);
-            // searchObject.postedBy = { $in: objectIds };
             var objectIds = [];
             if(!req.session.user.following){
                 req.session.user.following = [];
@@ -176,6 +178,7 @@ router.put('/:id', async(req, res, next) => {
             res.sendStatus(400);
         });
 });
+
 async function getPosts(filter){
     var results =await Post.find(filter)
         .populate("postedBy")
