@@ -11,12 +11,16 @@ block content
         .chatPageContainer
             .chatTitleBarContainer
                 +createChatImage(chat, userLoggedIn)
-                span#chatName(data-bs-toggle='modal', data-bs-target='#editChatNameModal') this is the chat
+                span#chatName(data-bs-toggle='modal', data-bs-target='#editChatNameModal')
+
             .mainContentContainer
-                .chatContainer
-                    .chatMessages
+                .loadingSpinnerContainer 
+                    img(src="/images/loading.gif", alt="loading")
+
+                .chatContainer(style="visibility: hidden")
+                    ul.chatMessages
                     .footer 
-                        textarea(name="messageInput", placeholder="Type a message ...")
+                        textarea.inputTexbox(name="messageInput", placeholder="Type a message ...")
                         button.sendMessageButton
                             i.fas.fa-paper-plane
 
