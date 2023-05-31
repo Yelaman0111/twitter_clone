@@ -58,6 +58,7 @@ nav a{
     justify-content: center;
     text-decoration: none;
     color: #212529;
+    position: relative;
 }
 
 nav a.blue {
@@ -674,6 +675,7 @@ button span {
     align-items: flex-end;
 }
 
+.typingDots img, 
 .chatMessages .message .messageBody{
     background-color: #f1f0f0;
     padding: 6px 12px;
@@ -681,7 +683,13 @@ button span {
     font-size: 14px;
     
 }
-
+.typingDots img {
+    height: 35px;
+}
+.typingDots{
+    padding: 0 var(--spacing);
+    display: none;
+}
 .chatMessages .message .messageContainer{
     display: flex;
     flex-direction: column;
@@ -772,4 +780,49 @@ button span {
 .loadingSpinnerContainer img{
     width: 50%;
     max-width: 300px;
+}
+
+.resultListItem.active{
+    background: var(--blueBackground)
+}
+
+.resultListItem.notification * {
+    pointer-events: none;
+}
+
+#notificationBadge,
+#messagesBadge
+{
+    background-color: var(--red);
+    height: 25px;
+    width: 25px;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: #fff;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    visibility: hidden;
+}
+#notificationBadge.active,
+#messagesBadge.active
+{
+    visibility: visible;
+    
+}    
+
+
+#notificationList{
+    position: fixed;
+    top: 5px;
+    right: 5px;
+    width: 350px;
+    background-color: #fff;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+#notificationList .active{
+    background-color: white;
 }

@@ -25,8 +25,10 @@ html(lang="en")
                         i.fas.fa-search 
                     a(href="/notifications")
                         i.fas.fa-bell 
+                        span#notificationBadge 
                     a(href="/messages")
                         i.fas.fa-envelope 
+                        span#messagesBadge 
                     a(href="/profile")
                         i.fas.fa-user 
                     a(href="/logout")
@@ -38,13 +40,16 @@ html(lang="en")
                     block content
 
                 .d-none.d-md-block.col-md-2.col-lg-4
+        #notificationList
 
         script(src='https://kit.fontawesome.com/018ff2a8f0.js' crossorigin='anonymous')
         script(src='https://code.jquery.com/jquery-3.7.0.min.js', integrity='sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=', crossorigin='anonymous')
         script(src='https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.js')
         script(src='https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js', integrity='sha384-zYPOMqeu1DAVkHiLqWBUTcbYfZ8osu1Nd6Z89ify25QV9guujx43ITvfi12/QExE', crossorigin='anonymous')
         script(src='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.min.js', integrity='sha384-Y4oOpwW3duJdCWv5ly8SCFYWqFDsfob/3GkgExXKV4idmbt98QcxXYs9UoXAB7BZ', crossorigin='anonymous')
+        script(src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.0/socket.io.min.js')
 
         block scripts
 
         script(src="/js/common.js")
+        script(src="/js/clientSocket.js")

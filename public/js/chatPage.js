@@ -1,4 +1,16 @@
+var typing = false;
+var lastTypingTime;
+
 $(document).ready(() => {
+
+    socket.emit("join room", chatId);
+    socket.on("typing", () => {
+        $(".typingDots").show();
+    });
+    socket.on("stop typing", () => {
+        $(".typingDots").hide();
+    });
+
     $.get(`/api/chats/${chatId}`, (data) => $("#chatName").text(getChatName(data)) );
 
     $.get(`/api/chats/${chatId}/messages`, (data) => {
@@ -15,6 +27,8 @@ $(document).ready(() => {
         var messagesHtml = messages.join("");
         addMessagesHtmlToPage(messagesHtml);
         scrollToBottom(false);
+        markAllMessagesAsRead();
+
         $(".loadingSpinnerContainer").remove();
         $(".chatContainer").css("visibility", "visible");
     })
@@ -40,11 +54,40 @@ $("#editChatNameButton").click(()=> {
 })
 
 $(".inputTexbox").keydown((event) => {
+
+    updateTyping();
+
     if(event.which === 13 && !event.shiftKey){
         messageSubmited();
         return false;
     }
 })
+
+function updateTyping(){
+
+    if(!connected) return;
+
+    if(!typing)
+    {
+        typing = true
+        socket.emit("typing", chatId)
+    }
+
+    lastTypingTime = new Date().getTime();
+    var timerLength = 3000;
+
+    setTimeout(() => {
+        var timeNow = new Date().getTime();
+        var timeDif = timeNow - lastTypingTime;
+
+        if(timeDif >= timerLength && typing){
+            socket.emit("stop typing", chatId);
+            typing = false;
+
+        }
+    }, timerLength)
+
+}
 
 $(".sendMessageButton").click(() => {
     messageSubmited()
@@ -55,6 +98,9 @@ function messageSubmited() {
     if(content != ""){
         sendMessage(content);
         $(".inputTexbox").val("");
+        socket.emit("stop typing", chatId);
+        typing = false;
+
     }
 }
 
@@ -68,6 +114,10 @@ function sendMessage(content){
             return;
         }
         addChatMessageHtml(data);
+
+        if(connected) {
+            socket.emit("new message", data);
+        }
     });
 }
 
@@ -143,4 +193,12 @@ function scrollToBottom(animated){
     }else{
         container.scrollTop(scrollHeight);
     }
+}
+
+function markAllMessagesAsRead(){
+    $.ajax({
+        url: `/api/chats/${chatId}/messages/markAsRead`,
+        type: "PUT",
+        success: () => refreshMessagesBadge(),
+    })
 }
